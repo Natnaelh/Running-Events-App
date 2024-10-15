@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- 1. Create Running Events Table -->
+    <changeSet id="1" author="Natnael">
+        <createTable tableName="event">
+            <column name="id" type="serial">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="event_name" type="varchar(255)"/>
+            <column name="date" type="date"/>
+            <column name="description" type="text"/>
+            <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <!-- 2. Create Races Table -->
+    <changeSet id="2" author="Natnael">
+        <createTable tableName="race">
+            <column name="id" type="serial">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="event_id" type="int"/>
+            <column name="race_type" type="varchar(255)"/>
+            <column name="race_distance" type="varchar(255)"/>
+            <column name="race_category" type="varchar(255)"/>
+            <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="weather_condition_id" type="int"/>
+            <column name="course_condition_id" type="int"/>
+            <column name="address_id" type="int"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="event_id"
+            baseTableName="race"
+            constraintName="fk_race_event"
+            referencedColumnNames="id"
+            referencedTableName="event"/>
+    </changeSet>
+    
+    <!-- 1. Create Persons Table -->
+    <changeSet id="3" author="Natnael">
+        <createTable tableName="person">
+            <column name="id" type="serial">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="first_name" type="varchar(255)"/>
+            <column name="last_name" type="varchar(255)"/>
+            <column name="email" type="varchar(255)"/>
+            <column name="phone" type="varchar(255)"/>
+            <column name="date_of_birth" type="date"/>
+            <column name="gender" type="varchar(255)"/>
+        </createTable>
+    </changeSet>
+
+    <!-- 2. Create Results Table -->
+    <changeSet id="4" author="Natnael">
+        <createTable tableName="result">
+            <column name="id" type="serial">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="race_id" type="int"/>
+            <column name="person_id" type="int"/>
+            <column name="position" type="int"/>
+            <column name="name" type="varchar(255)"/>
+            <column name="gross_time" type="interval"/>
+            <column name="net_time" type="interval"/>
+            <column name="additional_info" type="text"/>
+            <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="race_id"
+            baseTableName="result"
+            constraintName="fk_result_race"
+            referencedColumnNames="id"
+            referencedTableName="race"/>
+
+        <addForeignKeyConstraint baseColumnNames="person_id"
+            baseTableName="result"
+            constraintName="fk_result_person"
+            referencedColumnNames="id"
+            referencedTableName="person"/>
+    </changeSet>
+
+    <!-- 3. Create Results Table -->
+    <changeSet id="5" author="Natnael">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="result"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="result">
+            <column name="id" type="serial">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="race_id" type="int"/>
+            <column name="person_id" type="int"/>
+            <column name="position" type="int"/>
+            <column name="name" type="varchar(255)"/>
+            <column name="gross_time" type="interval"/>
+            <column name="net_time" type="interval"/>
+            <column name="additional_info" type="text"/>
+            <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+
+    <!-- 4. Create Weather Condition Table -->
+    <changeSet id="6" author="Natnael">
+        <createTable tableName="weather_condition">
+            <column name="id" type="serial">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="temperature" type="decimal"/>
+            <column name="humidity" type="decimal"/>
+            <column name="weather_description" type="varchar(255)"/>
+            <column name="wind_speed" type="decimal"/>
+            <column name="wind_direction" type="varchar(255)"/>
+            <column name="wind_description" type="varchar(255)"/>
+        </createTable>
+    </changeSet>
+
+    <!-- 5. Create Course Condition Table -->
+    <changeSet id="7" author="Natnael">
+        <createTable tableName="course_condition">
+            <column name="id" type="serial">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="course_type" type="varchar(255)"/>
+            <column name="surface_type" type="varchar(255)"/>
+            <column name="course_description" type="text"/>
+        </createTable>
+    </changeSet>
+
+
+    <!-- 7. Create Addresses Table -->
+    <changeSet id="8" author="Natnael">
+        <createTable tableName="address">
+            <column name="id" type="serial">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="street" type="varchar(255)"/>
+            <column name="city" type="varchar(255)"/>
+            <column name="state" type="varchar(255)"/>
+            <column name="postal_code" type="varchar(255)"/>
+            <column name="country" type="varchar(255)"/>
+        </createTable>
+    </changeSet>
+
+    <!-- 8. Create Teams Table -->
+    <changeSet id="9" author="Natnael">
+        <createTable tableName="team">
+            <column name="id" type="serial">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="team_name" type="varchar(255)"/>
+            <column name="coach_name" type="varchar(255)"/>
+            <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <!-- 9. Create Team Participants Table -->
+    <changeSet id="10" author="Natnael">
+        <createTable tableName="team_participant">
+            <column name="team_id" type="int">
+                <constraints primaryKey="true" primaryKeyName="pk_team_participant" nullable="false"/>
+            </column>
+            <column name="person_id" type="int">
+                <constraints primaryKey="true" primaryKeyName="pk_team_participant" nullable="false"/>
+            </column>
+            <column name="role" type="varchar(255)"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="team_id"
+            baseTableName="team_participant"
+            constraintName="fk_team_participant_team"
+            referencedColumnNames="id"
+            referencedTableName="team"/>
+
+        <addForeignKeyConstraint baseColumnNames="person_id"
+            baseTableName="team_participant"
+            constraintName="fk_team_participant_person"
+            referencedColumnNames="id"
+            referencedTableName="person"/>
+    </changeSet>
+
+
+</databaseChangeLog>
